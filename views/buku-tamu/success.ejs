@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#6184D6",
+              "primary-dark": "#4B6BB5",
+            },
+          },
+        },
+      };
+    </script>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+
+    <!-- html2canvas for screenshot -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+      body {
+        font-family: "Inter", sans-serif;
+      }
+
+      .animate-fade-in {
+        animation: fadeIn 0.5s ease-in;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      .confetti {
+        animation: confetti 3s ease-in-out infinite;
+      }
+
+      @keyframes confetti {
+        0%,
+        100% {
+          transform: translateY(0) rotate(0deg);
+        }
+        25% {
+          transform: translateY(-10px) rotate(10deg);
+        }
+        75% {
+          transform: translateY(-10px) rotate(-10deg);
+        }
+      }
+
+      /* Kode Card Animation */
+      .kode-card {
+        animation: slideInUp 0.6s ease-out 0.3s both;
+      }
+
+      @keyframes slideInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Pulse Animation for Kode */
+      .kode-pulse {
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+
+      /* Shine Effect */
+      .shine {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .shine::after {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+          45deg,
+          transparent,
+          rgba(255, 255, 255, 0.3),
+          transparent
+        );
+        animation: shine 3s infinite;
+      }
+
+      @keyframes shine {
+        0% {
+          transform: translateX(-100%) translateY(-100%) rotate(45deg);
+        }
+        100% {
+          transform: translateX(100%) translateY(100%) rotate(45deg);
+        }
+      }
+
+      /* Modern Kode Card Styles */
+      .kode-display-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 24px;
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(102, 126, 234, 0.4);
+      }
+
+      .kode-display-card::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.1) 0%,
+          transparent 70%
+        );
+        animation: float 6s ease-in-out infinite;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translate(0, 0) rotate(0deg);
+        }
+        50% {
+          transform: translate(-20px, -20px) rotate(180deg);
+        }
+      }
+
+      .pattern-dots {
+        background-image: radial-gradient(
+          rgba(255, 255, 255, 0.1) 1px,
+          transparent 1px
+        );
+        background-size: 20px 20px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0.5;
+      }
+
+      .kode-box {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 16px;
+        padding: 1.5rem;
+        position: relative;
+        z-index: 1;
+      }
+
+      .kode-text {
+        font-family: "Courier New", monospace;
+        font-weight: 900;
+        letter-spacing: 0.3em;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      .download-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      }
+
+      .download-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+      }
+
+      .download-btn:active {
+        transform: translateY(0);
+      }
+
+      /* Decorative elements */
+      .corner-decoration {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .corner-tl {
+        top: 10px;
+        left: 10px;
+        border-right: none;
+        border-bottom: none;
+      }
+
+      .corner-br {
+        bottom: 10px;
+        right: 10px;
+        border-left: none;
+        border-top: none;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 640px) {
+        .kode-text {
+          font-size: 2.5rem !important;
+          letter-spacing: 0.2em;
+        }
+
+        .kode-display-card {
+          padding: 1.5rem;
+        }
+      }
+
+      @media (min-width: 641px) {
+        .kode-text {
+          font-size: 3rem !important;
+        }
+      }
+    </style>
+  </head>
+  <body class="min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-md w-full">
+      <!-- Success Card -->
+      <div class="bg-white p-4 text-center animate-fade-in">
+        <!-- Success Icon -->
+        <div class="inline-block p-6 bg-green-100 rounded-full mb-6 confetti">
+          <i class="fas fa-check-circle text-green-500 text-6xl"></i>
+        </div>
+
+        <!-- Success Message -->
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+          Terima Kasih!
+        </h1>
+
+        <p class="text-gray-600 text-lg mb-4">
+          Data Anda telah berhasil tersimpan dalam buku tamu kami.
+        </p>
+
+        <% if (kode) { %>
+        <!-- Kode Tamu Card - Modern Design -->
+        <div
+          id="kode-card-capture"
+          class="kode-display-card kode-card mb-6"
+          style="
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 24px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.4);
+          "
+        >
+          <!-- Pattern Background -->
+          <div class="pattern-dots"></div>
+
+          <!-- Corner Decorations -->
+          <div class="corner-decoration corner-tl"></div>
+          <div class="corner-decoration corner-br"></div>
+
+          <!-- Content -->
+          <div class="relative z-10">
+            <!-- Header -->
+            <div class="mb-4">
+              <p
+                class="text-white text-opacity-90 text-sm"
+                style="color: white; opacity: 0.9; font-size: 0.875rem"
+              >
+                HUT Yayasan KAGUMI 2025
+              </p>
+            </div>
+
+            <!-- Kode Box -->
+            <div
+              class="kode-box mb-4"
+              style="
+                background: rgba(255, 255, 255, 0.15);
+                border: 2px solid rgba(255, 255, 255, 0.3);
+                border-radius: 16px;
+                padding: 1.5rem;
+              "
+            >
+              <p
+                class="text-white text-xs font-medium mb-2 opacity-75 uppercase tracking-wide"
+                style="
+                  color: white;
+                  opacity: 0.75;
+                  font-size: 0.75rem;
+                  text-transform: uppercase;
+                  letter-spacing: 0.1em;
+                "
+              >
+                Kode Anda
+              </p>
+              <p
+                class="kode-text text-white text-center"
+                style="
+                  font-family: 'Courier New', monospace;
+                  font-weight: 900;
+                  letter-spacing: 0.3em;
+                  color: white !important;
+                  font-size: 2.5rem;
+                  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+                  margin: 0;
+                  padding: 0;
+                "
+              >
+                <%= kode %>
+              </p>
+            </div>
+
+            <!-- User Info -->
+            <div
+              class="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-4 mb-4"
+              style="background: rgba(255, 255, 255, 0.15); border-radius: 12px"
+            >
+              <% if (nama_lengkap) { %>
+              <div class="flex items-center justify-center gap-3 mb-3">
+                <div
+                  class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center"
+                >
+                  <i
+                    class="fas fa-user text-white text-sm"
+                    style="color: white"
+                  ></i>
+                </div>
+                <div class="text-left flex-1">
+                  <p
+                    class="text-white text-xs opacity-75"
+                    style="color: white; opacity: 0.75"
+                  >
+                    Nama
+                  </p>
+                  <p
+                    class="text-white font-semibold text-base"
+                    style="color: white; font-weight: 600; font-size: 1rem"
+                  >
+                    <%= nama_lengkap %>
+                  </p>
+                </div>
+              </div>
+              <% } %>
+
+              <!-- Info Footer -->
+              <div
+                class="flex items-center justify-center gap-2 pt-3 border-t border-white border-opacity-20"
+                style="border-top: 1px solid rgba(255, 255, 255, 0.2)"
+              >
+                <i
+                  class="fas fa-shield-alt text-white text-xs opacity-75"
+                  style="color: white; opacity: 0.75"
+                ></i>
+                <p
+                  class="text-white text-xs opacity-75"
+                  style="color: white; opacity: 0.75; font-size: 0.75rem"
+                >
+                  Simpan kode ini untuk mengikuti undian berhadiah
+                </p>
+              </div>
+            </div>
+
+            <!-- Date & Time -->
+            <div
+              class="flex items-center justify-center gap-4 text-white text-xs opacity-75"
+              style="color: white; opacity: 0.75; font-size: 0.75rem"
+            >
+              <div class="flex items-center gap-2">
+                <i class="far fa-calendar" style="color: white"></i>
+                <span id="current-date" style="color: white"></span>
+              </div>
+              <div class="flex items-center gap-2">
+                <i class="far fa-clock" style="color: white"></i>
+                <span id="current-time" style="color: white"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Download Button -->
+        <button
+          onclick="downloadKodeCard()"
+          class="download-btn text-white font-semibold px-8 py-4 rounded-xl mb-4 w-full flex items-center justify-center gap-3 transform transition-all duration-300 hover:scale-105"
+        >
+          <i class="fas fa-download text-lg"></i>
+          <span class="text-base">Download Kode sebagai Gambar</span>
+        </button>
+        <% } %>
+      </div>
+
+      <!-- Footer -->
+      <div class="text-center mt-6 text-gray-500 text-sm">
+        <span class="ml-2">HUT Yayasan KAGUMI 2025 - Buku Tamu Digital</span>
+      </div>
+    </div>
+
+    <script>
+      // Update current date and time
+      function updateDateTime() {
+        const now = new Date();
+
+        // Format date
+        const dateOptions = {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        };
+        const dateStr = now.toLocaleDateString("id-ID", dateOptions);
+
+        // Format time
+        const timeOptions = {
+          hour: "2-digit",
+          minute: "2-digit",
+        };
+        const timeStr = now.toLocaleTimeString("id-ID", timeOptions);
+
+        // Update DOM
+        const dateEl = document.getElementById("current-date");
+        const timeEl = document.getElementById("current-time");
+
+        if (dateEl) dateEl.textContent = dateStr;
+        if (timeEl) timeEl.textContent = timeStr;
+      }
+
+      // Call on page load
+      updateDateTime();
+
+      // Debug URL parameters on page load
+      window.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const kode = urlParams.get("kode");
+        const nama = urlParams.get("nama");
+        console.log("URL Parameters - Kode:", kode, "Nama:", nama);
+
+        // Fallback: jika tidak ada parameter, coba ambil dari EJS
+        if (!kode || !nama) {
+          console.warn("Missing URL parameters, using EJS fallback");
+        }
+      });
+
+      // Download kode card as image
+      async function downloadKodeCard() {
+        const kodeCard = document.getElementById("kode-card-capture");
+
+        if (!kodeCard) {
+          alert("Kode card tidak ditemukan!");
+          return;
+        }
+
+        try {
+          // Show loading
+          const downloadBtn = event.target.closest("button");
+          const originalHTML = downloadBtn.innerHTML;
+          downloadBtn.disabled = true;
+          downloadBtn.innerHTML = `
+            <i class="fas fa-spinner fa-spin text-lg"></i>
+            <span class="text-base">Memproses...</span>
+          `;
+
+          // Get values from URL params (more reliable than EJS in JS)
+          const urlParams = new URLSearchParams(window.location.search);
+          let actualKode = urlParams.get("kode");
+          let actualNama = urlParams.get("nama");
+
+          // Fallback to EJS values if URL params not available
+          if (!actualKode) {
+            actualKode = "<%= kode %>" || "ERROR";
+          }
+          if (!actualNama) {
+            actualNama = "<%= nama_lengkap %>" || "Nama Error";
+          } else {
+            actualNama = decodeURIComponent(actualNama);
+          }
+
+          console.log("Final values - Kode:", actualKode, "Nama:", actualNama);
+
+          // Create canvas manually with guaranteed content
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+
+          // Set canvas size
+          canvas.width = 400;
+          canvas.height = 350;
+
+          // Create gradient background
+          const gradient = ctx.createLinearGradient(0, 0, 400, 350);
+          gradient.addColorStop(0, "#667eea");
+          gradient.addColorStop(1, "#764ba2");
+
+          // Fill background
+          ctx.fillStyle = gradient;
+          ctx.fillRect(0, 0, 400, 350);
+
+          // Set text properties for header
+          ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+          ctx.font = "14px Arial, sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText("HUT Yayasan KAGUMI 2025", 200, 40);
+
+          // Draw kode box background
+          ctx.fillStyle = "rgba(255, 255, 255, 0.15)";
+          ctx.fillRect(50, 70, 300, 120);
+
+          // Draw kode box border
+          ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
+          ctx.lineWidth = 2;
+          ctx.strokeRect(50, 70, 300, 120);
+
+          // Set text properties for "Kode Anda" label
+          ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
+          ctx.font = "12px Arial, sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText("KODE ANDA", 200, 95);
+
+          // Set text properties for kode value (main text)
+          ctx.fillStyle = "#ffffff";
+          ctx.font = "bold 36px Courier New, monospace";
+          ctx.textAlign = "center";
+          ctx.letterSpacing = "0.3em";
+
+          // Add text shadow effect
+          ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
+          ctx.shadowBlur = 8;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 2;
+
+          // Draw kode text
+          ctx.fillText(actualKode, 200, 145);
+
+          // Reset shadow
+          ctx.shadowColor = "transparent";
+          ctx.shadowBlur = 0;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 0;
+
+          // Draw user info box background
+          ctx.fillStyle = "rgba(255, 255, 255, 0.15)";
+          ctx.fillRect(50, 210, 300, 80);
+
+          // User info text
+          ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
+          ctx.font = "12px Arial, sans-serif";
+          ctx.textAlign = "left";
+          ctx.fillText("Nama:", 80, 235);
+
+          // Nama value
+          ctx.fillStyle = "#ffffff";
+          ctx.font = "bold 16px Arial, sans-serif";
+          ctx.fillText(actualNama, 80, 255);
+
+          // Info text
+          ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
+          ctx.font = "11px Arial, sans-serif";
+          ctx.textAlign = "center";
+          // ctx.fillText(
+          //   "Simpan kode ini untuk mengikuti undian berhadiah",
+          //   200,
+          //   280
+          // );
+
+          // Date and time
+          const now = new Date();
+          const dateStr = now.toLocaleDateString("id-ID", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          });
+          const timeStr = now.toLocaleTimeString("id-ID", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+
+          ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+          ctx.font = "10px Arial, sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText(`${dateStr} • ${timeStr}`, 200, 320);
+
+          // Force content visibility before capture
+          const kodeElement = kodeCard.querySelector(".kode-text");
+          if (kodeElement) {
+            kodeElement.style.fontSize = "2.5rem";
+            kodeElement.style.color = "white";
+            kodeElement.style.fontFamily = "Courier New, monospace";
+            kodeElement.style.fontWeight = "900";
+            kodeElement.style.textAlign = "center";
+
+            // Force content if empty
+            if (
+              !kodeElement.textContent ||
+              kodeElement.textContent.trim() === ""
+            ) {
+              kodeElement.textContent = "<%= kode %>";
+            }
+          }
+
+          // Wait longer to ensure all fonts and styles are fully loaded
+          await new Promise((resolve) => setTimeout(resolve, 500));
+
+          // Convert canvas to blob and download
+          canvas.toBlob(
+            function (blob) {
+              if (!blob) {
+                alert("Gagal membuat gambar. Silakan coba lagi.");
+                downloadBtn.disabled = false;
+                downloadBtn.innerHTML = originalHTML;
+                return;
+              }
+
+              // Create download
+              const url = URL.createObjectURL(blob);
+              const link = document.createElement("a");
+              const timestamp = new Date().getTime();
+
+              link.href = url;
+              link.download = `Kode-Undian-${actualKode}-${timestamp}.png`;
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+
+              // Cleanup
+              setTimeout(() => URL.revokeObjectURL(url), 100);
+
+              // Restore button
+              downloadBtn.disabled = false;
+              downloadBtn.innerHTML = originalHTML;
+
+              // Success message
+              showSuccessToast();
+            },
+            "image/png",
+            1.0
+          );
+        } catch (error) {
+          console.error("Error downloading:", error);
+          alert(
+            "Terjadi kesalahan saat mendownload: " +
+              (error.message || "Unknown error")
+          );
+
+          // Restore button
+          const downloadBtn = event.target.closest("button");
+          if (downloadBtn) {
+            downloadBtn.disabled = false;
+            downloadBtn.innerHTML = `
+              <i class="fas fa-download text-lg"></i>
+              <span class="text-base">Download Kode sebagai Gambar</span>
+            `;
+          }
+        }
+      }
+
+      // Show success toast notification
+      function showSuccessToast() {
+        const toast = document.createElement("div");
+        toast.className =
+          "fixed bottom-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-2xl flex items-center gap-3 animate-fade-in z-50";
+        toast.innerHTML = `
+          <i class="fas fa-check-circle text-2xl"></i>
+          <div>
+            <p class="font-semibold">Berhasil!</p>
+            <p class="text-sm opacity-90">Kode berhasil didownload</p>
+          </div>
+        `;
+
+        document.body.appendChild(toast);
+
+        // Remove after 3 seconds
+        setTimeout(() => {
+          toast.style.opacity = "0";
+          toast.style.transform = "translateY(20px)";
+          setTimeout(() => toast.remove(), 300);
+        }, 3000);
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#6184D6",
+            },
+          },
+        },
+      };
+    </script>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+      body {
+        font-family: "Inter", sans-serif;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen flex items-center justify-center p-4"
+  >
+    <div class="max-w-md w-full text-center">
+      <div class="bg-white rounded-2xl shadow-2xl p-10">
+        <div class="text-8xl font-bold text-primary mb-4">404</div>
+        <h1 class="text-3xl font-bold text-gray-800 mb-4">
+          Halaman Tidak Ditemukan
+        </h1>
+        <p class="text-gray-600 mb-8">
+          Maaf, halaman yang Anda cari tidak dapat ditemukan.
+        </p>
+
+        <div class="space-y-3">
+          <a
+            href="/buku-tamu"
+            class="block w-full bg-primary hover:bg-primary-dark text-white font-semibold py-3 rounded-lg transition"
+          >
+            <i class="fas fa-home mr-2"></i>Kembali ke Beranda
+          </a>
+          <a
+            href="/admin"
+            class="block w-full border-2 border-gray-300 hover:border-primary text-gray-700 hover:text-primary font-semibold py-3 rounded-lg transition"
+          >
+            <i class="fas fa-shield-alt mr-2"></i>Admin Panel
+          </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#6184D6",
+              "primary-dark": "#4B6BB5",
+            },
+          },
+        },
+      };
+    </script>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+      body {
+        font-family: "Inter", sans-serif;
+      }
+
+      .animate-fade-in {
+        animation: fadeIn 0.5s ease-in;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Wheel Container - Modern & Responsive */
+      .wheel-container {
+        position: relative;
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+        aspect-ratio: 1 / 1;
+      }
+
+      /* Outer Glow Ring */
+      .wheel-container::before {
+        content: '';
+        position: absolute;
+        inset: -30px;
+        background: linear-gradient(135deg, rgba(97, 132, 214, 0.3), rgba(236, 72, 153, 0.3), rgba(139, 92, 246, 0.3));
+        border-radius: 50%;
+        animation: rotate-glow 8s linear infinite;
+        z-index: -1;
+        filter: blur(20px);
+      }
+
+      @keyframes rotate-glow {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      /* Wheel Canvas - Enhanced */
+      #wheelCanvas {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        box-shadow: 
+          0 0 0 8px rgba(255, 255, 255, 0.1),
+          0 0 0 16px rgba(255, 255, 255, 0.05),
+          0 25px 70px rgba(97, 132, 214, 0.5),
+          inset 0 0 50px rgba(0, 0, 0, 0.1);
+        transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+        border: 6px solid white;
+      }
+
+      /* Center Pin - Modern Design */
+      .wheel-pin {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: clamp(60px, 15%, 90px);
+        height: clamp(60px, 15%, 90px);
+        background: linear-gradient(135deg, #fbbf24, #f59e0b, #f97316);
+        border-radius: 50%;
+        border: 5px solid white;
+        box-shadow: 
+          0 8px 25px rgba(251, 191, 36, 0.6),
+          0 0 0 8px rgba(251, 191, 36, 0.1),
+          inset 0 -5px 15px rgba(0, 0, 0, 0.2);
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: clamp(24px, 6vw, 36px);
+        color: white;
+        animation: pulse-pin 2s ease-in-out infinite;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      }
+
+      @keyframes pulse-pin {
+        0%, 100% {
+          box-shadow: 
+            0 8px 25px rgba(251, 191, 36, 0.6),
+            0 0 0 8px rgba(251, 191, 36, 0.1),
+            inset 0 -5px 15px rgba(0, 0, 0, 0.2);
+        }
+        50% {
+          box-shadow: 
+            0 8px 35px rgba(251, 191, 36, 0.9),
+            0 0 0 12px rgba(251, 191, 36, 0.2),
+            inset 0 -5px 15px rgba(0, 0, 0, 0.2);
+        }
+      }
+
+      /* Arrow Pointer - Modern Design */
+      .wheel-arrow {
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 0;
+        border-left: clamp(20px, 4vw, 30px) solid transparent;
+        border-right: clamp(20px, 4vw, 30px) solid transparent;
+        border-top: clamp(40px, 8vw, 60px) solid #ef4444;
+        z-index: 5;
+        filter: drop-shadow(0 6px 12px rgba(239, 68, 68, 0.6));
+        animation: bounce-arrow 1.5s ease-in-out infinite;
+      }
+
+      @keyframes bounce-arrow {
+        0%, 100% {
+          transform: translateX(-50%) translateY(0);
+        }
+        50% {
+          transform: translateX(-50%) translateY(-8px);
+        }
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 640px) {
+        .wheel-container {
+          max-width: 320px;
+        }
+        
+        .wheel-container::before {
+          inset: -20px;
+        }
+        
+        #wheelCanvas {
+          border-width: 4px;
+        }
+        
+        .wheel-pin {
+          border-width: 4px;
+        }
+      }
+
+      @media (min-width: 641px) and (max-width: 1024px) {
+        .wheel-container {
+          max-width: 400px;
+        }
+      }
+
+      /* Spinning state effect */
+      .wheel-container.spinning::before {
+        animation: rotate-glow 1s linear infinite;
+      }
+
+      .wheel-container.spinning .wheel-pin {
+        animation: pulse-pin 0.5s ease-in-out infinite;
+      }
+
+      /* Spin Button - Simple Blink Effect */
+      .spin-button {
+        background: linear-gradient(135deg, #6184d6, #4a6bbd);
+        transition: all 0.3s ease;
+        position: relative;
+        animation: soft-blink 2s ease-in-out infinite;
+      }
+
+      @keyframes soft-blink {
+        0%, 100% {
+          box-shadow: 0 4px 15px rgba(97, 132, 214, 0.4);
+          opacity: 1;
+        }
+        50% {
+          box-shadow: 0 4px 30px rgba(97, 132, 214, 0.8),
+                      0 0 40px rgba(97, 132, 214, 0.5);
+          opacity: 0.9;
+        }
+      }
+
+      .spin-button:hover:not(:disabled) {
+        background: linear-gradient(135deg, #4a6bbd, #3a5aa0);
+        transform: scale(1.05);
+        animation: fast-blink 1s ease-in-out infinite;
+      }
+
+      @keyframes fast-blink {
+        0%, 100% {
+          box-shadow: 0 4px 20px rgba(97, 132, 214, 0.6);
+        }
+        50% {
+          box-shadow: 0 4px 35px rgba(97, 132, 214, 1),
+                      0 0 50px rgba(97, 132, 214, 0.7);
+        }
+      }
+
+      .spin-button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        animation: none;
+      }
+
+      /* Winner Modal */
+      .winner-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .winner-modal.active {
+        display: flex;
+      }
+
+      .winner-content {
+        background: white;
+        border-radius: 24px;
+        padding: 40px;
+        max-width: 600px;
+        width: 90%;
+        text-align: center;
+        animation: modalPop 0.5s ease-out;
+      }
+
+      @keyframes modalPop {
+        0% {
+          transform: scale(0.5);
+          opacity: 0;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      /* Confetti Animation - Enhanced */
+      @keyframes confetti-fall {
+        0% {
+          transform: translateY(-100vh) rotate(0deg) scale(1);
+          opacity: 1;
+        }
+        50% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(100vh) rotate(720deg) scale(0.5);
+          opacity: 0;
+        }
+      }
+
+      .confetti {
+        position: fixed;
+        width: 10px;
+        height: 10px;
+        z-index: 10000;
+        pointer-events: none;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .ml-64 {
+          margin-left: 0;
+        }
+
+        .wheel-container {
+          width: 350px;
+          height: 350px;
+        }
+
+        .wheel-pin {
+          width: 60px;
+          height: 60px;
+          font-size: 24px;
+        }
+
+        .wheel-arrow {
+          border-left: 20px solid transparent;
+          border-right: 20px solid transparent;
+          border-top: 40px solid #ef4444;
+        }
+      }
+
+      /* SweetAlert2 Custom Styling */
+      .swal2-popup {
+        border-radius: 16px !important;
+        font-family: "Inter", sans-serif !important;
+      }
+
+      .swal2-title {
+        font-size: 24px !important;
+        font-weight: 700 !important;
+        color: #1f2937 !important;
+      }
+
+      .swal2-html-container {
+        font-size: 16px !important;
+        color: #4b5563 !important;
+      }
+
+      .swal2-confirm,
+      .swal2-cancel {
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+        padding: 12px 24px !important;
+        transition: all 0.3s ease !important;
+      }
+
+      .swal2-confirm:hover {
+        transform: scale(1.05) !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+      }
+
+      .swal2-cancel:hover {
+        transform: scale(1.05) !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+      }
+
+      .swal2-icon {
+        border-width: 3px !important;
+      }
+
+      /* Custom Scrollbar for Participants List */
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 10px;
+      }
+      
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: linear-gradient(to bottom, #6184D6, #8b5cf6);
+        border-radius: 10px;
+      }
+      
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(to bottom, #4B6BB5, #7c3aed);
+      }
+
+      /* Pulse Animation for Status Indicators */
+      @keyframes pulse {
+        0%, 100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      .animate-pulse {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+
+      /* Staggered Fade In Animation */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .animate-fade-in {
+        animation: fadeInUp 0.5s ease-out forwards;
+        opacity: 0;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50">
+    <!-- Sidebar -->
+    <%- include('../partials/admin-sidebar') %>
+
+    <!-- Main Content -->
+    <div class="ml-64 p-4">
+      <!-- Header with Admin Info -->
+      <div class="mb-6 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-2xl lg:text-3xl font-bold text-gray-800 mb-2">
+            <i class="fas fa-gift text-primary mr-2 lg:mr-3"></i>Lucky Wheel Spin
+          </h1>
+          <p class="text-sm lg:text-base text-gray-600">
+            Undian Berhadiah - Putar roda dan menangkan hadiah menarik!
+          </p>
+        </div>
+        
+        <!-- Admin Info (Top Right) -->
+        <div class="flex flex-col lg:flex-row items-start lg:items-center gap-3 w-full lg:w-auto">
+          <div class="px-4 lg:px-6 py-3 lg:py-4 flex items-center gap-3 bg-white rounded-lg shadow w-full lg:w-auto">
+            <div class="w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-primary to-blue-500 rounded-full flex items-center justify-center text-white font-bold text-base lg:text-lg flex-shrink-0">
+              <i class="fas fa-user-shield"></i>
+            </div>
+            <div>
+              <p class="font-semibold text-gray-800 text-sm lg:text-base"><%= session.user.name %></p>
+              <p class="text-xs text-gray-500">
+                <i class="fas fa-shield-alt text-primary mr-1"></i>Administrator
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="text-center py-20">
+          <div
+            class="inline-block animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-600"
+          ></div>
+          <p class="mt-4 text-gray-600">Memuat data peserta...</p>
+        </div>
+
+        <!-- Main Wheel Section -->
+        <div id="wheelSection" class="hidden">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+            <!-- Wheel Column (2/3) -->
+            <div class="lg:col-span-2">
+              <div
+                class="bg-gradient-to-br from-white via-blue-50/30 to-purple-50/30 rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8 flex flex-col items-center relative overflow-hidden"
+              >
+                <!-- Decorative Elements -->
+                <div class="absolute top-0 left-0 w-40 h-40 bg-blue-400/10 rounded-full blur-3xl"></div>
+                <div class="absolute bottom-0 right-0 w-40 h-40 bg-purple-400/10 rounded-full blur-3xl"></div>
+                
+                <!-- Wheel Container -->
+                <div class="wheel-container mb-6 sm:mb-8 relative z-10">
+                  <div class="wheel-arrow"></div>
+                  <canvas id="wheelCanvas"></canvas>
+                  <div class="wheel-pin">
+                    <i class="fas fa-crown"></i>
+                  </div>
+                </div>
+
+                <!-- Spin Button -->
+                <button
+                  id="spinButton"
+                  class="spin-button text-white font-bold py-3 sm:py-4 px-8 sm:px-12 rounded-full text-lg sm:text-xl shadow-lg relative z-10"
+                >
+                  <i class="fas fa-play mr-3"></i>PUTAR SEKARANG!
+                </button>
+
+                <p class="mt-4 text-gray-500 text-sm">
+                  Klik tombol untuk memulai undian
+                </p>
+              </div>
+            </div>
+
+            <!-- Info Column (1/3) -->
+            <div class="lg:col-span-1">
+              <div class="bg-white rounded-2xl shadow-xl p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">
+                  <i class="fas fa-info-circle text-blue-600 mr-2"></i>Informasi
+                  Undian
+                </h3>
+
+                <div class="space-y-4">
+                  <div class="bg-blue-50 p-4 rounded-lg">
+                    <p class="text-sm text-gray-600 mb-1">Status:</p>
+                    <p id="wheelStatus" class="font-semibold text-blue-800">
+                      Siap untuk diputar
+                    </p>
+                  </div>
+
+                  <div class="bg-green-50 p-4 rounded-lg">
+                    <p class="text-sm text-gray-600 mb-1">Peserta Terdaftar:</p>
+                    <p
+                      id="participantCount"
+                      class="font-semibold text-green-800"
+                    >
+                      0 orang
+                    </p>
+                  </div>
+
+                  <div class="bg-yellow-50 p-4 rounded-lg">
+                    <p class="text-sm text-gray-600 mb-1">Total Pemenang:</p>
+                    <p
+                      id="winnerCount"
+                      class="font-semibold text-yellow-800"
+                    >
+                      0 orang
+                    </p>
+                  </div>
+
+                  <div class="border-t pt-4">
+                    <h4 class="font-semibold text-gray-700 mb-2">
+                      <i class="fas fa-list-check mr-2"></i>Cara Bermain:
+                    </h4>
+                    <ol
+                      class="text-sm text-gray-600 space-y-2 list-decimal list-inside"
+                    >
+                      <li>Klik tombol "PUTAR SEKARANG!"</li>
+                      <li>Tunggu roda berhenti berputar</li>
+                      <li>Pemenang akan ditampilkan</li>
+                    </ol>
+                  </div>
+
+                  <!-- Winner History Section -->
+                  <div class="border-t pt-4">
+                    <h4 class="font-semibold text-gray-700 mb-3 flex items-center justify-between">
+                      <span><i class="fas fa-trophy text-yellow-500 mr-2"></i>Pemenang Terbaru</span>
+                      <button
+                        id="refreshWinnersBtn"
+                        class="text-xs bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-lg transition-colors"
+                        title="Refresh data pemenang"
+                      >
+                        <i class="fas fa-sync-alt mr-1"></i>Refresh
+                      </button>
+                    </h4>
+                    <div id="winnerHistoryList" class="space-y-2 max-h-64 overflow-y-auto">
+                      <!-- Akan diisi dengan JavaScript -->
+                      <p class="text-xs text-gray-500 text-center py-2">Memuat data...</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Daftar Peserta Section (Modern Design) -->
+          <div class="bg-gradient-to-br from-white to-purple-50 rounded-2xl shadow-xl overflow-hidden border border-purple-100">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-primary to-purple-600 p-4 lg:p-6">
+              <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-users text-white text-xl"></i>
+                  </div>
+                  <div>
+                    <h3 class="text-xl lg:text-2xl font-bold text-white">
+                      Daftar Peserta Undian
+                    </h3>
+                    <p class="text-sm text-blue-100 mt-1">
+                      Peserta yang memenuhi syarat untuk mengikuti undian
+                    </p>
+                  </div>
+                </div>
+                
+                <!-- Total Badge -->
+                <div class="bg-white bg-opacity-20 backdrop-blur-sm px-4 lg:px-6 py-2 lg:py-3 rounded-xl border border-white border-opacity-30">
+                  <div class="flex items-center gap-2 lg:gap-3">
+                    <div class="w-8 h-8 lg:w-10 lg:h-10 bg-white rounded-full flex items-center justify-center">
+                      <i class="fas fa-ticket text-primary text-sm lg:text-base"></i>
+                    </div>
+                    <div>
+                      <p class="text-xs text-blue-100 font-medium">Total Peserta</p>
+                      <p id="totalParticipants" class="text-2xl lg:text-3xl font-bold text-white">0</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Content -->
+            <div class="p-4 lg:p-6">
+              <!-- Search & Filter Bar (Optional Enhancement) -->
+              <div class="mb-4 lg:mb-6 flex flex-col sm:flex-row gap-3">
+                <div class="flex-1 relative">
+                  <input
+                    type="text"
+                    id="searchParticipant"
+                    placeholder="Cari peserta berdasarkan nama atau kode..."
+                    class="max-w-4xl pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  />
+                  <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                </div>
+                <button
+                  id="resetSearchBtn"
+                  class="sm:w-auto bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-3 rounded-xl font-semibold transition-all flex items-center justify-center gap-2"
+                >
+                  <i class="fas fa-redo"></i>
+                  <span>Reset</span>
+                </button>
+              </div>
+
+              <!-- Participants Grid -->
+              <div
+                id="participantsList"
+                class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 lg:gap-4 max-h-[500px] overflow-y-auto custom-scrollbar pr-2"
+              >
+                <!-- Akan diisi dengan JavaScript -->
+              </div>
+
+              <!-- Empty State -->
+              <div id="emptyParticipants" class="hidden text-center py-12">
+                <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <i class="fas fa-search text-3xl text-gray-400"></i>
+                </div>
+                <p class="text-gray-600 text-lg font-semibold mb-2">Tidak Ada Hasil</p>
+                <p class="text-gray-500 text-sm">Coba kata kunci pencarian yang berbeda</p>
+              </div>
+
+              <!-- Info Footer -->
+              <div class="mt-6 pt-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm">
+                <div class="flex items-center gap-2 text-gray-600">
+                  <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-info-circle text-primary text-xs"></i>
+                  </div>
+                  <span class="text-xs lg:text-sm">Peserta yang sudah menang tidak akan ditampilkan di roda</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                  <span class="text-xs text-gray-500">Data real-time</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Winner Modal -->
+        <div id="winnerModal" class="winner-modal">
+          <div class="winner-content">
+            <div class="mb-6">
+              <h2 class="text-4xl font-bold text-gray-800 mb-2">
+                SELAMAT!
+              </h2>
+            </div>
+
+            <!-- Winner Photo -->
+            <div class="mb-6">
+              <div
+                class="w-48 h-48 mx-auto rounded-full overflow-hidden border-8 border-yellow-400 shadow-2xl"
+              >
+                <img
+                  id="winnerPhoto"
+                  src=""
+                  alt="Winner"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+
+            <!-- Winner Details -->
+            <div
+              class="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-xl mb-6"
+            >
+              <h3
+                id="winnerName"
+                class="text-3xl font-bold text-gray-800 mb-2"
+              ></h3>
+              <div class="flex items-center justify-center space-x-4 text-lg">
+                <span
+                  class="bg-blue-600 text-white px-4 py-2 rounded-full font-semibold"
+                ><span id="winnerKode"></span>
+                </span>
+                <span class="text-gray-600">
+                  <i class="fas fa-school mr-2"></i
+                  ><span id="winnerSchool"></span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Close Button -->
+            <button
+              id="closeWinnerModal"
+              class="bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-3 px-8 rounded-full text-lg hover:shadow-lg transition-all"
+            >
+              <i class="fas fa-check mr-2"></i>Tutup
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Global Variables
+      let participants = [];
+      let spinning = false;
+      let canvas, ctx;
+      const colors = [
+        "#FF6B6B",
+        "#4ECDC4",
+        "#45B7D1",
+        "#FFA07A",
+        "#98D8C8",
+        "#F7DC6F",
+        "#BB8FCE",
+        "#85C1E2",
+        "#F8B739",
+        "#52B788",
+      ];
+
+      // Initialize
+      document.addEventListener("DOMContentLoaded", async () => {
+        canvas = document.getElementById("wheelCanvas");
+        ctx = canvas.getContext("2d");
+        
+        // Set canvas size responsively
+        setCanvasSize();
+        window.addEventListener('resize', setCanvasSize);
+
+        await loadParticipants();
+        await loadWinnerHistory(); // Load winner history
+        setupEventListeners();
+      });
+
+      // Set canvas size based on container
+      function setCanvasSize() {
+        const container = document.querySelector('.wheel-container');
+        if (container) {
+          const size = Math.min(container.offsetWidth, container.offsetHeight);
+          
+          // Ensure minimum size to prevent errors
+          if (size > 0) {
+            canvas.width = size;
+            canvas.height = size;
+            
+            // Redraw wheel if participants are loaded and canvas is valid
+            if (participants.length > 0 && canvas.width > 0) {
+              drawWheel();
+            }
+          }
+        }
+      }
+
+      // Load Participants
+      async function loadParticipants() {
+        try {
+          const response = await fetch("/admin/api/wheel/data");
+          const result = await response.json();
+
+          if (result.success) {
+            participants = result.data;
+            document.getElementById("totalParticipants").textContent =
+              result.total;
+            document.getElementById(
+              "participantCount"
+            ).textContent = `${result.total} orang`;
+
+            if (participants.length > 0) {
+              // Show wheel section first
+              document.getElementById("loadingState").classList.add("hidden");
+              document
+                .getElementById("wheelSection")
+                .classList.remove("hidden");
+              
+              // Wait for DOM to update, then draw wheel
+              setTimeout(() => {
+                setCanvasSize(); // This will call drawWheel internally
+                displayParticipants();
+              }, 100);
+            } else {
+              Swal.fire({
+                icon: 'info',
+                title: 'Tidak Ada Peserta',
+                text: 'Tidak ada peserta undian. Pastikan ada tamu yang sudah memiliki kode.',
+                confirmButtonColor: '#6184D6',
+                confirmButtonText: '<i class="fas fa-check mr-2"></i>OK',
+                customClass: {
+                  confirmButton: 'px-6 py-3 rounded-lg font-semibold'
+                }
+              });
+            }
+          }
+        } catch (error) {
+          console.error("Error loading participants:", error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Gagal Memuat Data',
+            text: 'Tidak dapat memuat data peserta. Silakan coba lagi.',
+            confirmButtonColor: '#ef4444',
+            confirmButtonText: '<i class="fas fa-times mr-2"></i>OK',
+            customClass: {
+              confirmButton: 'px-6 py-3 rounded-lg font-semibold'
+            }
+          });
+        }
+      }
+
+      // Load Winner History
+      async function loadWinnerHistory() {
+        try {
+          const response = await fetch("/admin/api/wheel/winners");
+          const result = await response.json();
+
+          if (result.success) {
+            const winners = result.data;
+            const container = document.getElementById("winnerHistoryList");
+            
+            // Update winner count
+            document.getElementById("winnerCount").textContent = `${result.total} orang`;
+
+            if (winners.length > 0) {
+              container.innerHTML = winners
+                .map(
+                  (w, index) => `
+                <div class="bg-gradient-to-r from-yellow-50 to-orange-50 p-3 rounded-lg border border-yellow-200 hover:shadow-md transition-shadow">
+                  <div class="flex items-center gap-3">
+                    <div class="flex-shrink-0 w-10 h-10 bg-yellow-400 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                      ${index + 1}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p class="font-semibold text-sm text-gray-800 truncate">${w.nama_lengkap}</p>
+                      <div class="flex items-center gap-2 text-xs text-gray-600 mt-1">
+                        <span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-semibold">${w.kode}</span>
+                        <span class="truncate" title="${w.nama_sekolah || '-'}">
+                          <i class="fas fa-school mr-1"></i>${w.nama_sekolah || '-'}
+                        </span>
+                      </div>
+                      <p class="text-xs text-gray-500 mt-1">
+                        <i class="fas fa-clock mr-1"></i>${new Date(w.created_at).toLocaleString('id-ID', { 
+                          day: '2-digit', 
+                          month: 'short', 
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              `
+                )
+                .join("");
+            } else {
+              container.innerHTML = `
+                <div class="text-center py-4">
+                  <i class="fas fa-trophy text-gray-300 text-3xl mb-2"></i>
+                  <p class="text-xs text-gray-500">Belum ada pemenang</p>
+                </div>
+              `;
+            }
+          }
+        } catch (error) {
+          console.error("Error loading winner history:", error);
+          document.getElementById("winnerHistoryList").innerHTML = `
+            <div class="text-center py-2">
+              <p class="text-xs text-red-500">Gagal memuat data pemenang</p>
+            </div>
+          `;
+        }
+      }
+
+      // Draw Wheel - Enhanced Modern Version
+      function drawWheel(rotation = 0) {
+        // Validate canvas dimensions
+        if (!canvas || canvas.width <= 0 || canvas.height <= 0) {
+          console.warn('Canvas not ready yet');
+          return;
+        }
+
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const radius = Math.max((canvas.width / 2) - 20, 50); // Ensure minimum radius
+        const totalSegments = participants.length;
+        
+        if (totalSegments === 0) {
+          return; // No participants to draw
+        }
+        
+        const anglePerSegment = (2 * Math.PI) / totalSegments;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.save();
+        ctx.translate(centerX, centerY);
+        ctx.rotate(rotation);
+
+        participants.forEach((participant, index) => {
+          const startAngle = index * anglePerSegment;
+          const endAngle = startAngle + anglePerSegment;
+          const midAngle = startAngle + anglePerSegment / 2;
+          const color = colors[index % colors.length];
+
+          // Create gradient for segment with validation
+          let gradient;
+          try {
+            gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, radius);
+            gradient.addColorStop(0, color);
+            gradient.addColorStop(1, adjustBrightness(color, -20));
+          } catch (e) {
+            // Fallback to solid color if gradient fails
+            gradient = color;
+          }
+
+          // Draw segment with gradient
+          ctx.beginPath();
+          ctx.fillStyle = gradient;
+          ctx.moveTo(0, 0);
+          ctx.arc(0, 0, radius, startAngle, endAngle);
+          ctx.lineTo(0, 0);
+          ctx.fill();
+
+          // Draw border with shadow
+          ctx.strokeStyle = "#fff";
+          ctx.lineWidth = 4;
+          ctx.shadowColor = "rgba(0, 0, 0, 0.2)";
+          ctx.shadowBlur = 8;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 0;
+          ctx.stroke();
+
+          // Reset shadow for text
+          ctx.shadowColor = "transparent";
+          ctx.shadowBlur = 0;
+
+          // Draw text with better positioning
+          ctx.save();
+          ctx.rotate(midAngle);
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          
+          // Responsive font size
+          const fontSize = Math.max(12, Math.min(18, radius / 15));
+          ctx.font = `bold ${fontSize}px Inter, Arial, sans-serif`;
+          
+          // Text shadow for better readability
+          ctx.shadowColor = "rgba(0, 0, 0, 0.7)";
+          ctx.shadowBlur = 6;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 2;
+          
+          ctx.fillStyle = "#fff";
+          const textRadius = radius * 0.75;
+          ctx.fillText(participant.kode, textRadius, 0);
+          
+          ctx.restore();
+        });
+
+        ctx.restore();
+      }
+
+      // Helper function to adjust color brightness
+      function adjustBrightness(color, percent) {
+        const num = parseInt(color.replace("#",""), 16);
+        const amt = Math.round(2.55 * percent);
+        const R = (num >> 16) + amt;
+        const G = (num >> 8 & 0x00FF) + amt;
+        const B = (num & 0x0000FF) + amt;
+        return "#" + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 +
+          (G<255?G<1?0:G:255)*0x100 + (B<255?B<1?0:B:255))
+          .toString(16).slice(1);
+      }
+
+      // Display Participants List
+      function displayParticipants(filterText = '') {
+        const container = document.getElementById("participantsList");
+        const emptyState = document.getElementById("emptyParticipants");
+        
+        // Filter participants based on search
+        let filteredParticipants = participants;
+        if (filterText) {
+          const searchLower = filterText.toLowerCase();
+          filteredParticipants = participants.filter(p => 
+            p.nama_lengkap.toLowerCase().includes(searchLower) || 
+            p.kode.toLowerCase().includes(searchLower)
+          );
+        }
+
+        if (filteredParticipants.length === 0) {
+          container.classList.add('hidden');
+          emptyState.classList.remove('hidden');
+          return;
+        }
+
+        container.classList.remove('hidden');
+        emptyState.classList.add('hidden');
+
+        container.innerHTML = filteredParticipants
+          .map(
+            (p, index) => `
+          <div class="group bg-white rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-primary transform hover:-translate-y-2 animate-fade-in" style="animation-delay: ${index * 0.05}s">
+            <!-- Photo -->
+            <div class="relative overflow-hidden bg-gradient-to-br from-blue-100 to-purple-100">
+              <img 
+                src="${p.foto}" 
+                alt="${p.nama_lengkap}" 
+                class="w-full h-24 sm:h-28 lg:h-32 object-cover group-hover:scale-110 transition-transform duration-500"
+                loading="lazy"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              
+              <!-- Badge -->
+              <div class="absolute top-2 right-2 bg-white bg-opacity-95 backdrop-blur-sm px-2 py-1 rounded-lg shadow-lg">
+                <span class="text-xs font-bold text-primary">#${index + 1}</span>
+              </div>
+            </div>
+            
+            <!-- Info -->
+            <div class="p-3">
+              <!-- Kode Badge -->
+              <div class="mb-2 flex items-center justify-center">
+                <span class="bg-gradient-to-r from-primary to-purple-600 text-white px-3 py-1 rounded-full text-xs lg:text-sm font-bold shadow-md">
+                  <i class="fas fa-ticket mr-1"></i>${p.kode}
+                </span>
+              </div>
+              
+              <!-- Name -->
+              <h4 class="font-bold text-sm lg:text-base text-gray-800 text-center truncate mb-1 group-hover:text-primary transition-colors" title="${p.nama_lengkap}">
+                ${p.nama_lengkap}
+              </h4>
+              
+              <!-- School -->
+              <p class="text-xs text-gray-500 text-center truncate flex items-center justify-center gap-1" title="${p.nama_sekolah || 'Tidak ada sekolah'}">
+                <i class="fas fa-school"></i>
+                <span class="truncate">${p.nama_sekolah || '-'}</span>
+              </p>
+              
+              <!-- Status Indicator -->
+              <div class="mt-2 pt-2 border-t border-gray-100 flex items-center justify-center gap-1">
+                <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span class="text-xs text-gray-500">Siap Undian</span>
+              </div>
+            </div>
+          </div>
+        `
+          )
+          .join("");
+      }
+
+      // Setup Event Listeners
+      function setupEventListeners() {
+        document
+          .getElementById("spinButton")
+          .addEventListener("click", spinWheel);
+        document
+          .getElementById("closeWinnerModal")
+          .addEventListener("click", closeWinnerModal);
+        document
+          .getElementById("refreshWinnersBtn")
+          .addEventListener("click", async () => {
+            const btn = document.getElementById("refreshWinnersBtn");
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>Loading...';
+            
+            await loadWinnerHistory();
+            
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-sync-alt mr-1"></i>Refresh';
+          });
+
+        // Search functionality
+        const searchInput = document.getElementById("searchParticipant");
+        if (searchInput) {
+          searchInput.addEventListener("input", (e) => {
+            displayParticipants(e.target.value);
+          });
+        }
+
+        // Reset search
+        const resetBtn = document.getElementById("resetSearchBtn");
+        if (resetBtn) {
+          resetBtn.addEventListener("click", () => {
+            searchInput.value = '';
+            displayParticipants();
+          });
+        }
+      }
+
+      // Spin Wheel
+      async function spinWheel() {
+        if (spinning) return;
+        spinning = true;
+
+        const spinButton = document.getElementById("spinButton");
+        spinButton.disabled = true;
+        spinButton.innerHTML =
+          '<i class="fas fa-spinner fa-spin mr-3"></i>MEMUTAR...';
+        document.getElementById("wheelStatus").textContent =
+          "Sedang memutar roda...";
+
+        try {
+          const response = await fetch("/admin/api/wheel/spin", {
+            method: "POST",
+          });
+          const result = await response.json();
+
+          if (result.success) {
+            const winner = result.winner;
+            const totalSegments = participants.length;
+            const anglePerSegment = (2 * Math.PI) / totalSegments;
+
+            // Calculate target rotation
+            const winnerIndex = participants.findIndex(
+              (p) => p.id === winner.id
+            );
+            const extraSpins = 5; // Number of full rotations
+            const targetAngle =
+              extraSpins * 2 * Math.PI +
+              (2 * Math.PI - winnerIndex * anglePerSegment);
+
+            // Animate wheel
+            animateWheel(targetAngle, () => {
+              showWinner(winner);
+              spinning = false;
+              spinButton.disabled = false;
+              spinButton.innerHTML =
+                '<i class="fas fa-play mr-3"></i>PUTAR LAGI!';
+              document.getElementById("wheelStatus").textContent =
+                "Siap untuk diputar";
+            });
+          }
+        } catch (error) {
+          console.error("Error spinning wheel:", error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Gagal Melakukan Undian',
+            text: 'Terjadi kesalahan saat melakukan undian. Silakan coba lagi.',
+            confirmButtonColor: '#ef4444',
+            confirmButtonText: '<i class="fas fa-times mr-2"></i>OK',
+            customClass: {
+              confirmButton: 'px-6 py-3 rounded-lg font-semibold'
+            }
+          });
+          spinning = false;
+          spinButton.disabled = false;
+          spinButton.innerHTML =
+            '<i class="fas fa-play mr-3"></i>PUTAR SEKARANG!';
+        }
+      }
+
+      // Animate Wheel - Enhanced with visual effects
+      function animateWheel(targetRotation, callback) {
+        const duration = 5000; // 5 seconds for smoother animation
+        const startTime = Date.now();
+        const startRotation = 0;
+        const wheelCanvas = document.getElementById('wheelCanvas');
+        const wheelContainer = document.querySelector('.wheel-container');
+
+        // Add spinning class for effects
+        wheelCanvas.style.filter = 'blur(0px)';
+        wheelContainer.classList.add('spinning');
+
+        function animate() {
+          const currentTime = Date.now();
+          const elapsed = currentTime - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+
+          // Improved easing function (ease-out with bounce)
+          const easeProgress = progress < 0.5
+            ? 2 * progress * progress
+            : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+
+          const currentRotation = startRotation + targetRotation * easeProgress;
+          
+          // Add blur effect when spinning fast
+          const blurAmount = Math.sin(progress * Math.PI) * 3;
+          wheelCanvas.style.filter = `blur(${blurAmount}px)`;
+          
+          drawWheel(currentRotation);
+
+          if (progress < 1) {
+            requestAnimationFrame(animate);
+          } else {
+            wheelCanvas.style.filter = 'blur(0px)';
+            wheelContainer.classList.remove('spinning');
+            callback();
+          }
+        }
+
+        animate();
+      }
+
+      // Show Winner
+      function showWinner(winner) {
+        document.getElementById("winnerPhoto").src = winner.foto;
+        document.getElementById("winnerName").textContent = winner.nama_lengkap;
+        document.getElementById("winnerKode").textContent = winner.kode;
+        document.getElementById("winnerSchool").textContent =
+          winner.nama_sekolah || "-";
+
+        document.getElementById("winnerModal").classList.add("active");
+        createConfetti();
+      }
+
+      // Close Winner Modal
+      async function closeWinnerModal() {
+        document.getElementById("winnerModal").classList.remove("active");
+        
+        // Reload data participants untuk update daftar (exclude pemenang terbaru)
+        await loadParticipants();
+        
+        // Reload winner history untuk update daftar pemenang
+        await loadWinnerHistory();
+        
+        // Jika tidak ada peserta lagi, tampilkan info
+        if (participants.length === 0) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Semua Peserta Sudah Menang!',
+            html: 'Selamat! Semua peserta sudah mendapatkan hadiah.<br>Undian telah selesai.',
+            confirmButtonColor: '#22c55e',
+            confirmButtonText: '<i class="fas fa-check mr-2"></i>OK',
+            customClass: {
+              confirmButton: 'px-6 py-3 rounded-lg font-semibold'
+            }
+          });
+          
+          // Hide wheel section, show completion message
+          document.getElementById("wheelSection").classList.add("hidden");
+          document.getElementById("loadingState").classList.remove("hidden");
+          document.getElementById("loadingState").innerHTML = `
+            <div class="text-center py-20">
+              <i class="fas fa-trophy text-yellow-500 text-6xl mb-4"></i>
+              <h2 class="text-3xl font-bold text-gray-800 mb-2">Undian Selesai!</h2>
+              <p class="text-gray-600">Semua peserta sudah mendapatkan hadiah</p>
+            </div>
+          `;
+        }
+      }
+
+      // Create Confetti - Enhanced Modern Version
+      function createConfetti() {
+        const confettiCount = 150;
+        const colors = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#FFA07A", "#F7DC6F", "#fbbf24", "#ec4899", "#8b5cf6"];
+        const shapes = ["circle", "square"];
+
+        for (let i = 0; i < confettiCount; i++) {
+          const confetti = document.createElement("div");
+          confetti.className = "confetti";
+          
+          const shape = shapes[Math.floor(Math.random() * shapes.length)];
+          const size = Math.random() * 8 + 6;
+          
+          confetti.style.left = Math.random() * 100 + "%";
+          confetti.style.top = "-20px";
+          confetti.style.width = size + "px";
+          confetti.style.height = size + "px";
+          confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+          confetti.style.borderRadius = shape === "circle" ? "50%" : "2px";
+          confetti.style.animationDuration = Math.random() * 2 + 2 + "s";
+          confetti.style.animationDelay = Math.random() * 0.5 + "s";
+          confetti.style.animation = "confetti-fall linear forwards";
+          confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+          confetti.style.opacity = Math.random() * 0.5 + 0.5;
+
+          document.body.appendChild(confetti);
+
+          setTimeout(() => confetti.remove(), 5000);
+        }
+      }
+    </script>
+  </body>
+</html>

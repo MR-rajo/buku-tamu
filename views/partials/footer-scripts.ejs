@@ -1,0 +1,78 @@
+<!-- Additional footer scripts -->
+<script>
+  // Show success message
+  function showSuccess(message) {
+    const alertDiv = document.createElement("div");
+    alertDiv.className =
+      "fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg animate-fade-in z-50";
+    alertDiv.innerHTML = `
+            <div class="flex items-center gap-3">
+                <i class="fas fa-check-circle text-xl"></i>
+                <span>${message}</span>
+            </div>
+        `;
+    document.body.appendChild(alertDiv);
+
+    setTimeout(() => {
+      alertDiv.style.animation = "fadeOut 0.5s ease-out";
+      setTimeout(() => alertDiv.remove(), 500);
+    }, 3000);
+  }
+
+  // Show error message
+  function showError(message) {
+    const alertDiv = document.createElement("div");
+    alertDiv.className =
+      "fixed top-4 right-4 bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg animate-fade-in z-50";
+    alertDiv.innerHTML = `
+            <div class="flex items-center gap-3">
+                <i class="fas fa-exclamation-circle text-xl"></i>
+                <span>${message}</span>
+            </div>
+        `;
+    document.body.appendChild(alertDiv);
+
+    setTimeout(() => {
+      alertDiv.style.animation = "fadeOut 0.5s ease-out";
+      setTimeout(() => alertDiv.remove(), 500);
+    }, 3000);
+  }
+
+  // Show loading overlay
+  function showLoading() {
+    const loadingDiv = document.createElement("div");
+    loadingDiv.id = "loading-overlay";
+    loadingDiv.className =
+      "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50";
+    loadingDiv.innerHTML = `
+            <div class="bg-white p-6 rounded-lg shadow-xl">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-spinner fa-spin text-primary text-2xl"></i>
+                    <span class="text-gray-700 font-medium">Memproses...</span>
+                </div>
+            </div>
+        `;
+    document.body.appendChild(loadingDiv);
+  }
+
+  // Hide loading overlay
+  function hideLoading() {
+    const loadingDiv = document.getElementById("loading-overlay");
+    if (loadingDiv) {
+      loadingDiv.remove();
+    }
+  }
+</script>
+
+<style>
+  @keyframes fadeOut {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+  }
+</style>

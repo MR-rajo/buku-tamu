@@ -1,0 +1,133 @@
+<aside
+  class="bg-white h-screen w-64 fixed left-0 top-0 shadow-lg overflow-y-auto"
+>
+  <div class="p-6 border-b border-gray-200">
+    <div class="flex items-center gap-3">
+      <img src="/images/logo.png" alt="Logo" class="w-12 h-12 object-contain" />
+      <div>
+        <h2 class="font-bold text-lg text-gray-800">Buku Tamu</h2>
+        <p class="text-xs text-gray-500">Buku Tamu Digital</p>
+      </div>
+    </div>
+  </div>
+
+  <nav class="p-4">
+    <ul class="space-y-2">
+      <li>
+        <a
+          href="/admin/dashboard"
+          class="flex items-center gap-3 p-3 rounded-lg hover:bg-primary hover:text-white transition <%= currentPage === 'dashboard' ? 'bg-primary text-white' : 'text-gray-700' %>"
+        >
+          <i class="fas fa-chart-line w-5"></i>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <li>
+        <a
+          href="/admin/data-tamu"
+          class="flex items-center gap-3 p-3 rounded-lg hover:bg-primary hover:text-white transition <%= currentPage === 'data-tamu' ? 'bg-primary text-white' : 'text-gray-700' %>"
+        >
+          <i class="fas fa-users w-5"></i>
+          <span>Data Tamu</span>
+        </a>
+      </li>
+      <li>
+        <a
+          href="/admin/master-sekolah"
+          class="flex items-center gap-3 p-3 rounded-lg hover:bg-primary hover:text-white transition <%= currentPage === 'master-sekolah' ? 'bg-primary text-white' : 'text-gray-700' %>"
+        >
+          <i class="fas fa-school w-5"></i>
+          <span>Master Sekolah</span>
+        </a>
+      </li>
+      <li>
+        <a
+          href="/admin/wheel-spin"
+          class="flex items-center gap-3 p-3 rounded-lg hover:bg-primary hover:text-white transition <%= currentPage === 'wheel-spin' ? 'bg-primary text-white' : 'text-gray-700' %>"
+        >
+          <i class="fas fa-gift w-5"></i>
+          <span>Wheel Spin</span>
+        </a>
+      </li>
+      <li>
+        <a
+          href="/admin/whatsapp-settings"
+          class="flex items-center gap-3 p-3 rounded-lg hover:bg-primary hover:text-white transition <%= currentPage === 'whatsapp-settings' ? 'bg-primary text-white' : 'text-gray-700' %>"
+        >
+          <i class="fab fa-whatsapp w-5"></i>
+          <span>WhatsApp</span>
+        </a>
+      </li>
+      <li class="pt-4 border-t border-gray-200 mt-4">
+        <a
+          href="#"
+          onclick="confirmLogout(event)"
+          class="flex items-center gap-3 p-3 rounded-lg hover:bg-red-500 hover:text-white transition text-red-600"
+        >
+          <i class="fas fa-sign-out-alt w-5"></i>
+          <span>Logout</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</aside>
+
+<script>
+  // Function untuk konfirmasi logout
+  function confirmLogout(event) {
+    event.preventDefault();
+
+    // Check if SweetAlert2 is available
+    if (typeof Swal !== "undefined") {
+      Swal.fire({
+        title: "Konfirmasi Logout",
+        html: `
+          <div class="text-left">
+            <p class="text-gray-600 mb-4">Apakah Anda yakin ingin keluar dari sistem?</p>
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+              <p class="text-sm text-blue-800">
+                <i class="fas fa-info-circle mr-2"></i>
+                Anda perlu login kembali untuk mengakses halaman admin.
+              </p>
+            </div>
+          </div>
+        `,
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: '<i class="fas fa-sign-out-alt mr-2"></i>Ya, Logout',
+        cancelButtonText: '<i class="fas fa-times mr-2"></i>Batal',
+        confirmButtonColor: "#ef4444",
+        cancelButtonColor: "#6b7280",
+        customClass: {
+          confirmButton: "px-6 py-3 rounded-lg font-semibold",
+          cancelButton: "px-6 py-3 rounded-lg font-semibold",
+        },
+        reverseButtons: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Show loading state
+          Swal.fire({
+            title: "Logging out...",
+            html: "Mohon tunggu sebentar",
+            allowOutsideClick: false,
+            didOpen: () => {
+              Swal.showLoading();
+            },
+          });
+
+          // Redirect to logout
+          window.location.href = "/admin/logout";
+        }
+      });
+    } else {
+      // Fallback to native confirm if SweetAlert2 is not available
+      if (
+        confirm(
+          "Apakah Anda yakin ingin logout?\n\nAnda perlu login kembali untuk mengakses halaman admin."
+        )
+      ) {
+        window.location.href = "/admin/logout";
+      }
+    }
+  }
+</script>
