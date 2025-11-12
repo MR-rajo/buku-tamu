@@ -291,12 +291,12 @@
             </div>
             <div>
               <h2 class="text-xl lg:text-2xl font-bold text-gray-800">
-                Statistik Per Sekolah
+                Statistik Per Instansi
               </h2>
               <p class="text-sm text-gray-600 mt-1">
                 <% if (schoolStats.length > 0) { %> <% const totalTamuHeader =
                 schoolStats.reduce((sum, s) => sum + s.jumlah_tamu, 0); %> <%=
-                schoolStats.length %> sekolah • <%= totalTamuHeader %> tamu <% }
+                schoolStats.length %> instansi • <%= totalTamuHeader %> tamu <% }
                 else { %> Belum ada data <% } %>
               </p>
             </div>

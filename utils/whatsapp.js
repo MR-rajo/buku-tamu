@@ -29,10 +29,6 @@ let clientState = "initializing"; // initializing, qr_ready, authenticated, read
 client.on("qr", (qr) => {
   currentQRCode = qr;
   clientState = "qr_ready";
-
-  console.log(
-    "📱 WhatsApp QR Code siap. Buka /admin/whatsapp-settings untuk scan."
-  );
 });
 
 // Event: Client siap

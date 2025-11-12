@@ -1,24 +1,40 @@
-<nav class="bg-white shadow-md">
-  <div class="container mx-auto px-4">
+<nav class="bg-white shadow-lg border-b border-gray-100">
+  <div class="w-full mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex justify-between items-center h-16">
+      <!-- Branding -->
       <div class="flex items-center gap-3">
-        <i class="fas fa-book text-primary text-2xl"></i>
-        <span class="font-bold text-xl text-gray-800">Buku Tamu Digital</span>
+        <div
+          class="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10"
+        >
+          <i class="fas fa-book text-primary text-2xl"></i>
+        </div>
+        <span class="font-bold text-xl text-primary">Buku Tamu Digital</span>
       </div>
 
       <% if (isAuthenticated) { %>
       <div class="flex items-center gap-4">
-        <span class="text-gray-600 hidden md:block">
-          <i class="fas fa-user-shield text-primary"></i>
-          <%= session.user.name %>
-        </span>
+        <!-- User Info -->
+        <div
+          class="flex items-center gap-2 bg-gray-50 px-3 py-1 rounded-full shadow-sm"
+        >
+          <div
+            class="w-8 h-8 flex items-center justify-center rounded-full bg-primary/20"
+          >
+            <i class="fas fa-user-shield text-primary"></i>
+          </div>
+          <span class="text-gray-700 font-medium hidden md:block"
+            ><%= session.user.name %></span
+          >
+        </div>
+        <!-- Logout Button -->
         <a
           href="#"
           onclick="confirmLogout(event)"
-          class="text-red-600 hover:text-red-800 transition"
+          class="flex items-center gap-2 px-4 py-2 rounded-full bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-800 transition font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-red-300"
+          aria-label="Logout"
         >
           <i class="fas fa-sign-out-alt"></i>
-          <span class="ml-2 hidden md:inline">Logout</span>
+          <span class="hidden md:inline">Logout</span>
         </a>
       </div>
       <% } %>
