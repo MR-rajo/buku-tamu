@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS master_sekolah (
 CREATE TABLE IF NOT EXISTS buku_tamu (
     id INT AUTO_INCREMENT PRIMARY KEY,
     sekolah_id INT NOT NULL,
+    other_instansi VARCHAR(100) NULL DEFAULT NULL,
     nama_lengkap VARCHAR(100) NOT NULL,
     nomor_wa VARCHAR(15),
     foto LONGTEXT,

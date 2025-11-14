@@ -296,8 +296,8 @@
               <p class="text-sm text-gray-600 mt-1">
                 <% if (schoolStats.length > 0) { %> <% const totalTamuHeader =
                 schoolStats.reduce((sum, s) => sum + s.jumlah_tamu, 0); %> <%=
-                schoolStats.length %> instansi • <%= totalTamuHeader %> tamu <% }
-                else { %> Belum ada data <% } %>
+                schoolStats.length %> instansi • <%= totalTamuHeader %> tamu <%
+                } else { %> Belum ada data <% } %>
               </p>
             </div>
           </div>
@@ -653,7 +653,7 @@
                   Nama
                 </th>
                 <th class="text-left py-3 px-4 text-gray-600 font-semibold">
-                  Sekolah
+                  Instansi
                 </th>
                 <th class="text-left py-3 px-4 text-gray-600 font-semibold">
                   WhatsApp
@@ -668,7 +668,15 @@
               <tr class="border-b border-gray-100 hover:bg-gray-50">
                 <td class="py-3 px-4"><%= index + 1 %></td>
                 <td class="py-3 px-4 font-medium"><%= guest.nama_lengkap %></td>
-                <td class="py-3 px-4"><%= guest.nama_sekolah %></td>
+                <td class="py-3 px-4">
+                  <%= guest.nama_sekolah %> <% if (guest.other_instansi) { %>
+                  <br />
+                  <span class="text-xs text-purple-600">
+                    <i class="fas fa-building mr-1"></i><%= guest.other_instansi
+                    %>
+                  </span>
+                  <% } %>
+                </td>
                 <td class="py-3 px-4"><%= guest.nomor_wa %></td>
                 <td class="py-3 px-4 text-sm text-gray-600">
                   <%= new Date(guest.created_at).toLocaleString('id-ID') %>

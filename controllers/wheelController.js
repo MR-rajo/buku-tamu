@@ -22,19 +22,22 @@ const getWheelData = async (req, res) => {
   try {
     // Ambil semua data tamu yang memiliki kode DAN belum pernah menang
     // Exclude tamu yang sudah ada di table wheel_spin
+    // Exclude tamu dari sekolah dengan keyword "Undangan"
     const [tamu] = await db.query(
       `SELECT 
         bt.id,
         bt.kode, 
         bt.nama_lengkap, 
         bt.foto,
-        ms.nama_sekolah
+        ms.nama_sekolah,
+        bt.other_instansi
       FROM buku_tamu bt
       LEFT JOIN master_sekolah ms ON bt.sekolah_id = ms.id
       WHERE bt.kode IS NOT NULL
         AND bt.id NOT IN (
           SELECT tamu_id FROM wheel_spin
         )
+        AND (ms.nama_sekolah NOT LIKE '%Undangan%' OR ms.nama_sekolah IS NULL)
       ORDER BY bt.created_at DESC`
     );
 
@@ -56,19 +59,22 @@ const getWheelData = async (req, res) => {
 const spinWheel = async (req, res) => {
   try {
     // Ambil semua data tamu yang memiliki kode DAN belum pernah menang
+    // Exclude tamu dari sekolah dengan keyword "Undangan"
     const [tamu] = await db.query(
       `SELECT 
         bt.id,
         bt.kode, 
         bt.nama_lengkap, 
         bt.foto,
-        ms.nama_sekolah
+        ms.nama_sekolah,
+        bt.other_instansi
       FROM buku_tamu bt
       LEFT JOIN master_sekolah ms ON bt.sekolah_id = ms.id
       WHERE bt.kode IS NOT NULL
         AND bt.id NOT IN (
           SELECT tamu_id FROM wheel_spin
         )
+        AND (ms.nama_sekolah NOT LIKE '%Undangan%' OR ms.nama_sekolah IS NULL)
       ORDER BY bt.created_at DESC`
     );
 
@@ -100,6 +106,7 @@ const spinWheel = async (req, res) => {
         nama_lengkap: winner.nama_lengkap,
         foto: winner.foto,
         nama_sekolah: winner.nama_sekolah,
+        other_instansi: winner.other_instansi,
         position: winnerPosition,
       },
       totalParticipants: tamu.length,
@@ -124,11 +131,12 @@ const getWinnerHistory = async (req, res) => {
         bt.kode,
         bt.nama_lengkap,
         bt.foto,
-        ms.nama_sekolah
+        ms.nama_sekolah,
+        bt.other_instansi
       FROM wheel_spin ws
       INNER JOIN buku_tamu bt ON ws.tamu_id = bt.id
       LEFT JOIN master_sekolah ms ON bt.sekolah_id = ms.id
-      ORDER BY ws.created_at DESC`
+      ORDER BY ws.id ASC`
     );
 
     res.json({

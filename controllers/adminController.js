@@ -282,7 +282,7 @@ const getDataTamu = async (req, res) => {
 
     // Build query for getting paginated data
     let query = `
-            SELECT bt.*, ms.nama_sekolah 
+            SELECT bt.*, ms.nama_sekolah, bt.other_instansi 
             FROM buku_tamu bt
             LEFT JOIN master_sekolah ms ON bt.sekolah_id = ms.id
         `;
@@ -402,6 +402,7 @@ const exportExcel = async (req, res) => {
                 bt.id,
                 bt.kode,
                 ms.nama_sekolah,
+                bt.other_instansi,
                 bt.nama_lengkap,
                 bt.nomor_wa,
                 bt.created_at
@@ -437,6 +438,7 @@ const exportExcel = async (req, res) => {
       No: index + 1,
       "Kode Tamu": guest.kode || "-",
       "Asal Sekolah": guest.nama_sekolah || "-",
+      "Instansi Lain": guest.other_instansi || "-",
       "Nama Lengkap": guest.nama_lengkap,
       "Nomor WhatsApp": guest.nomor_wa,
       "Tanggal Daftar": new Date(guest.created_at).toLocaleString("id-ID", {
@@ -458,6 +460,7 @@ const exportExcel = async (req, res) => {
       { wch: 5 }, // No
       { wch: 12 }, // Kode Tamu
       { wch: 30 }, // Asal Sekolah
+      { wch: 30 }, // Instansi Lain
       { wch: 25 }, // Nama Lengkap
       { wch: 18 }, // Nomor WhatsApp
       { wch: 22 }, // Tanggal Daftar
@@ -516,6 +519,7 @@ const getTamuWithoutKode = async (req, res) => {
         bt.id,
         bt.nama_lengkap,
         ms.nama_sekolah,
+        bt.other_instansi,
         bt.created_at
       FROM buku_tamu bt
       LEFT JOIN master_sekolah ms ON bt.sekolah_id = ms.id

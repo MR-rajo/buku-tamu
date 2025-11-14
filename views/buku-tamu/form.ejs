@@ -371,11 +371,40 @@
               >
                 <option value="">Pilih Instansi Anda</option>
                 <% sekolahList.forEach(sekolah => { %>
-                <option value="<%= sekolah.id %>">
+                <option
+                  value="<%= sekolah.id %>"
+                  data-nama="<%= sekolah.nama_sekolah %>"
+                >
                   <%= sekolah.nama_sekolah %>
                 </option>
                 <% }); %>
               </select>
+            </div>
+
+            <!-- Other Instansi (Conditional - shown when "Undangan" is selected) -->
+            <div id="otherInstansiGroup" class="group hidden">
+              <label
+                for="other_instansi"
+                class="block text-sm md:text-base font-bold text-gray-700 mb-3"
+              >
+                <div class="flex items-center gap-2">
+                  <span>Nama Instansi Anda</span>
+                  <span class="text-red-500">*</span>
+                </div>
+              </label>
+              <input
+                type="text"
+                id="other_instansi"
+                name="other_instansi"
+                placeholder="Masukkan nama instansi Anda"
+                class="input-field w-full px-3 py-4 text-base border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus:border-primary transition-all hover:border-primary-light"
+              />
+              <p
+                class="text-xs md:text-sm text-gray-500 mt-2 flex items-center gap-1"
+              >
+                <i class="fas fa-info-circle text-blue-500"></i>
+                <span>Masukkan nama instansi Anda</span>
+              </p>
             </div>
 
             <!-- Nama Lengkap -->
@@ -537,10 +566,13 @@
       // Form validation and progress tracking
       const formFields = {
         sekolah_id: false,
+        other_instansi: false, // Will be dynamically required
         nama_lengkap: false,
         nomor_wa: false,
         foto: false,
       };
+
+      let isOtherInstansiRequired = false; // Track if other_instansi is required
 
       // Camera variables
       let stream = null;
@@ -666,6 +698,12 @@
             return;
           }
 
+          // Validasi other_instansi jika required
+          if (isOtherInstansiRequired && !data.other_instansi) {
+            showError("Nama instansi harus diisi!");
+            return;
+          }
+
           // Validasi foto
           if (!fotoInput.value) {
             showError("Foto harus diambil!");
@@ -674,6 +712,13 @@
 
           // Add foto to data
           data.foto = fotoInput.value;
+
+          // Add other_instansi only if it's required and filled
+          if (isOtherInstansiRequired && data.other_instansi) {
+            data.other_instansi = data.other_instansi.trim();
+          } else {
+            delete data.other_instansi; // Remove if not required
+          }
 
           // Show loading
           showLoading();
@@ -755,9 +800,17 @@
 
       // Update progress bar
       function updateProgress() {
+        // Calculate completed fields based on whether other_instansi is required
+        let requiredFields = { ...formFields };
+
+        // If other_instansi is not required, don't count it
+        if (!isOtherInstansiRequired) {
+          delete requiredFields.other_instansi;
+        }
+
         const completedFields =
-          Object.values(formFields).filter(Boolean).length;
-        const totalFields = Object.keys(formFields).length;
+          Object.values(requiredFields).filter(Boolean).length;
+        const totalFields = Object.keys(requiredFields).length;
         const progress = (completedFields / totalFields) * 100;
 
         const progressBar = document.getElementById("progressBar");
@@ -799,7 +852,10 @@
           "bg-pink-500", // Foto
         ];
 
-        Object.keys(formFields).forEach((field, index) => {
+        // Map fields to steps (excluding other_instansi from step indicators)
+        const stepFields = ["sekolah_id", "nama_lengkap", "nomor_wa", "foto"];
+
+        stepFields.forEach((field, index) => {
           const stepElement = document.getElementById(`step${index + 1}`);
 
           // Remove all possible color classes
@@ -838,7 +894,7 @@
             "fas fa-lock transition-transform duration-300";
 
           const remaining = totalFields - completedFields;
-          if (remaining === 4) {
+          if (remaining === totalFields) {
             submitText.textContent = "Lengkapi Data Terlebih Dahulu";
           } else {
             submitText.textContent = `${remaining} Field Lagi`;
@@ -853,6 +909,14 @@
         switch (fieldName) {
           case "sekolah_id":
             formFields.sekolah_id = value && value.trim() !== "";
+            break;
+          case "other_instansi":
+            // Only validate if it's required (when Undangan is selected)
+            if (isOtherInstansiRequired) {
+              formFields.other_instansi = value && value.trim().length >= 2;
+            } else {
+              formFields.other_instansi = false; // Not required, so always false
+            }
             break;
           case "nama_lengkap":
             formFields.nama_lengkap = value && value.trim().length >= 2;
@@ -876,9 +940,39 @@
         const sekolahSelect = document.getElementById("sekolah_id");
         const namaInput = document.getElementById("nama_lengkap");
         const waInput = document.getElementById("nomor_wa");
+        const otherInstansiGroup =
+          document.getElementById("otherInstansiGroup");
+        const otherInstansiInput = document.getElementById("other_instansi");
 
         sekolahSelect.addEventListener("change", function () {
+          const selectedOption = this.options[this.selectedIndex];
+          const namaSekolah = selectedOption.getAttribute("data-nama") || "";
+
+          // Check if selected school contains "Undangan" keyword
+          if (namaSekolah.toLowerCase().includes("undangan")) {
+            // Show other_instansi field
+            otherInstansiGroup.classList.remove("hidden");
+            otherInstansiInput.setAttribute("required", "required");
+            isOtherInstansiRequired = true;
+
+            // Reset other_instansi validation status
+            formFields.other_instansi = false;
+          } else {
+            // Hide other_instansi field
+            otherInstansiGroup.classList.add("hidden");
+            otherInstansiInput.removeAttribute("required");
+            otherInstansiInput.value = ""; // Clear the value
+            isOtherInstansiRequired = false;
+
+            // Set other_instansi as not required (always true when hidden)
+            formFields.other_instansi = false;
+          }
+
           validateField("sekolah_id", this.value);
+        });
+
+        otherInstansiInput.addEventListener("input", function () {
+          validateField("other_instansi", this.value);
         });
 
         namaInput.addEventListener("input", function () {

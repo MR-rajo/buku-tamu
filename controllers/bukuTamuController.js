@@ -36,7 +36,8 @@ const generateKode = (namaLengkap) => {
 // Submit buku tamu
 const submitForm = async (req, res) => {
   try {
-    const { sekolah_id, nama_lengkap, nomor_wa, foto } = req.body;
+    const { sekolah_id, other_instansi, nama_lengkap, nomor_wa, foto } =
+      req.body;
 
     // Validasi input
     if (!sekolah_id || !nama_lengkap || !nomor_wa || !foto) {
@@ -58,8 +59,8 @@ const submitForm = async (req, res) => {
 
     // Insert data ke database terlebih dahulu (tanpa kode, dengan path foto)
     const [result] = await db.query(
-      "INSERT INTO buku_tamu (sekolah_id, nama_lengkap, nomor_wa, foto) VALUES (?, ?, ?, ?)",
-      [sekolah_id, nama_lengkap, nomor_wa, fotoPath]
+      "INSERT INTO buku_tamu (sekolah_id, other_instansi, nama_lengkap, nomor_wa, foto) VALUES (?, ?, ?, ?, ?)",
+      [sekolah_id, other_instansi || null, nama_lengkap, nomor_wa, fotoPath]
     );
 
     // Ambil ID yang baru saja di-insert

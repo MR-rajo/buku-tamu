@@ -823,6 +823,9 @@
                   Asal Instansi
                 </th>
                 <th class="text-left py-4 px-6 text-gray-600 font-semibold">
+                  Instansi Lain
+                </th>
+                <th class="text-left py-4 px-6 text-gray-600 font-semibold">
                   Nomor WhatsApp
                 </th>
                 <th class="text-left py-4 px-6 text-gray-600 font-semibold">
@@ -870,6 +873,15 @@
                   >
                     <%= guest.nama_sekolah %>
                   </span>
+                </td>
+                <td class="py-4 px-6">
+                  <% if (guest.other_instansi) { %>
+                  <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
+                    <%= guest.other_instansi %>
+                  </span>
+                  <% } else { %>
+                  <span class="text-gray-400 text-sm">-</span>
+                  <% } %>
                 </td>
                 <td class="py-4 px-6">
                   <a
@@ -1809,6 +1821,11 @@
                       <span class="text-sm text-gray-500">
                         <i class="fas fa-school mr-1"></i>${tamu.nama_sekolah || "-"}
                       </span>
+                      ${tamu.other_instansi ? `
+                      <span class="text-sm text-purple-600">
+                        <i class="fas fa-building mr-1"></i>${tamu.other_instansi}
+                      </span>
+                      ` : ''}
                       <span class="text-xs text-gray-400">
                         <i class="far fa-clock mr-1"></i>${new Date(
                           tamu.created_at
